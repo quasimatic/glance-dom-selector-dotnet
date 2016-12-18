@@ -1,1 +1,6 @@
+# Xamerin Studio things
 *.userprefs
+
+# Basic build related things
+bin
+obj
