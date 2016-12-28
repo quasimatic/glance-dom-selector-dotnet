@@ -4,3 +4,8 @@
 # Basic build related things
 bin
 obj
+packages
+*.csproj.user
+
+# Mac related things
+.DS_Store
