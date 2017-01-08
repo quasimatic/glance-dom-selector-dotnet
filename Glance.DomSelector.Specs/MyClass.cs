@@ -1,5 +1,8 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium;
+using System;
+using System.Threading;
 
 namespace Glance.DomSelector.Specs
 {
@@ -12,12 +15,22 @@ namespace Glance.DomSelector.Specs
 			ChromeOptions options = new ChromeOptions();
 			options.AddArguments("start-maximized");
 
-			using (var driver = new ChromeDriver("/Users/corywheeler/Documents/projects/chromestuff/"))
+			using (var driver = new ChromeDriver("/Users/corywheeler/Documents/projects/chromestuff"))
 			{
-				// Go to the home page
-				driver.Navigate().GoToUrl("http://quasimatic.com");
+				SimplerExampleCodeToExecuteGlance(driver);
 			}
+
+
 		}
+
+		static void SimplerExampleCodeToExecuteGlance(ChromeDriver driver)
+		{
+			driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
+			string getTheSquare = "return glanceSelector('square').className;";
+			var theResult = driver.ExecuteScript(getTheSquare);
+			Console.WriteLine(theResult + " cory");
+		}
+
 		static void ExampleCodeToExecuteGlance(ChromeDriver driver)
 		{
 			try
@@ -75,5 +88,6 @@ namespace Glance.DomSelector.Specs
 				Console.ReadLine();
 			}
 		}
+
 	}
 }
