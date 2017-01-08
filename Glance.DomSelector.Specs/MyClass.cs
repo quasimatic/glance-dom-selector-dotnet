@@ -18,6 +18,35 @@ namespace Glance.DomSelector.Specs
 				driver.Navigate().GoToUrl("http://quasimatic.com");
 			}
 		}
+		static void ExampleCodeToExecuteGlance(ChromeDriver driver)
+		{
+			try
+			{
+				driver.Url = "http://quasimatic.org/take-a-glance/?level=2";
+				driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(20));
+				driver.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(50));
+				driver.Manage().Window.Maximize();
+				driver.Navigate();
+
+				string Javascript = "return glanceSelector('square').className;";
+				string t = ((IJavaScriptExecutor)driver).ExecuteScript(Javascript).ToString();
+
+				//Above code will return the html source of the page 
+				Console.WriteLine(t);
+
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Exception ....*********" + e.ToString());
+			}
+			finally
+			{
+				Thread.Sleep(2000);
+				driver.Quit();
+				Console.ReadLine();
+			}
+		}
+
 		static void ExampleCodeToExecuteJavaScript(ChromeDriver driver)
 		{
 			try
