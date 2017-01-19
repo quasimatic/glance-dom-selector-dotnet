@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 using System;
 using System.Threading;
 
@@ -10,24 +11,63 @@ namespace Glance.DomSelector.Specs
 	public class When_trying_to_see_if_it_runs
 	{
 		[Test]
-		public void lets_scrape_something()
+		public void lets_try_something()
 		{
 			ChromeOptions options = new ChromeOptions();
 			options.AddArguments("start-maximized");
 
 			using (var driver = new ChromeDriver("/Users/corywheeler/Documents/projects/chromestuff"))
 			{
-				SimplerExampleCodeToExecuteGlance(driver);
+				CustomSeleniumLocator(driver);
 			}
 
 
 		}
 
+		static void CustomSeleniumLocator(ChromeDriver driver)
+		{
+			driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
+			Thread.Sleep(3000);
+			IWebElement theResult = (IWebElement)driver.FindElement(new GlanceSelector("square"));
+			theResult.Click();
+		}
+
+
+
+		public class GlanceSelector : By
+		{
+
+			private string _glanceReference;
+
+			public GlanceSelector(string glanceReference)
+			{
+				_glanceReference = glanceReference;
+
+			}
+
+			public override IWebElement FindElement(ISearchContext context)
+			{
+				var driver = (RemoteWebDriver)context;
+				string executeGlance = "return glanceSelector('" + _glanceReference + "');";
+				var element = driver.ExecuteScript(executeGlance);
+				return (IWebElement) element;
+			}
+
+			public override System.Collections.ObjectModel.ReadOnlyCollection<IWebElement> FindElements(ISearchContext context)
+			{
+				return base.FindElements(context);
+			}
+
+			
+		}
+
+
 		static void SimplerExampleCodeToExecuteGlance(ChromeDriver driver)
 		{
 			driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
-			string getTheSquare = "return glanceSelector('square').className;";
-			var theResult = driver.ExecuteScript(getTheSquare);
+			string getTheSquare = "return glanceSelector('square');";
+			IWebElement theResult = (IWebElement) driver.ExecuteScript(getTheSquare);
+			theResult.Click();
 			Console.WriteLine(theResult + " cory");
 		}
 
