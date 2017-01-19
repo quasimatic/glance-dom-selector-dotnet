@@ -16,7 +16,7 @@ namespace Glance.DomSelector.Specs
 			ChromeOptions options = new ChromeOptions();
 			options.AddArguments("start-maximized");
 
-			using (var driver = new ChromeDriver("/Users/corywheeler/Documents/projects/chromestuff"))
+			using (var driver = new ChromeDriver("/Users/corywheeler/Documents/projects/chromestuff", options))
 			{
 				CustomSeleniumLocator(driver);
 			}
@@ -28,7 +28,7 @@ namespace Glance.DomSelector.Specs
 		{
 			driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
 			Thread.Sleep(3000);
-			IWebElement theResult = (IWebElement)driver.FindElement(new GlanceSelector("square"));
+			IWebElement theResult = (IWebElement) driver.FindElement(new GlanceSelector("square"));
 			theResult.Click();
 		}
 
