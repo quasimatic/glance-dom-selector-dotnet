@@ -3,6 +3,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using System;
+using System.Collections.ObjectModel;
 using System.Threading;
 
 namespace Glance.DomSelector.Specs
@@ -53,7 +54,7 @@ namespace Glance.DomSelector.Specs
 				return (IWebElement) element;
 			}
 
-			public override System.Collections.ObjectModel.ReadOnlyCollection<IWebElement> FindElements(ISearchContext context)
+			public override ReadOnlyCollection<IWebElement> FindElements(ISearchContext context)
 			{
 				return base.FindElements(context);
 			}
