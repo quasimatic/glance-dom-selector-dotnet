@@ -15,7 +15,7 @@ namespace Glance.DomSelector.Specs
 		[Test]
 		public void lets_try_something()
 		{
-			ChromeOptions options = new ChromeOptions();
+			var options = new ChromeOptions();
 			options.AddArguments("start-maximized");
 
 			using (var driver = new ChromeDriver("/Users/corywheeler/Documents/projects/chromestuff", options))
@@ -57,7 +57,7 @@ namespace Glance.DomSelector.Specs
 			// Pause to allow time for glance to get loaded into the DOM.
 			Thread.Sleep(3000);
 
-			IWebElement theResult = (IWebElement) driver.FindElement(new GlanceSelector("square"));
+			var theResult = driver.FindElement(new GlanceSelector("square"));
 			theResult.Click();
 		}
 
@@ -89,7 +89,7 @@ namespace Glance.DomSelector.Specs
 		{
 			driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
 			string getTheSquare = "return glanceSelector('square');";
-			IWebElement theResult = (IWebElement) driver.ExecuteScript(getTheSquare);
+			var theResult = (IWebElement) driver.ExecuteScript(getTheSquare);
 			theResult.Click();
 			Console.WriteLine(theResult + " cory");
 		}
