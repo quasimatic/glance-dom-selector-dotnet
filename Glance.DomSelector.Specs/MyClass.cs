@@ -29,6 +29,8 @@ namespace Glance.DomSelector.Specs
 		static void CustomSeleniumLocator(ChromeDriver driver)
 		{
 			driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
+
+			// Pause to allow time for glance to get loaded into the DOM.
 			Thread.Sleep(3000);
 
 			IWebElement theResult = (IWebElement) driver.FindElement(new GlanceSelector("square"));
