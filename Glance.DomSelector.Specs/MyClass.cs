@@ -20,10 +20,34 @@ namespace Glance.DomSelector.Specs
 
 			using (var driver = new ChromeDriver("/Users/corywheeler/Documents/projects/chromestuff", options))
 			{
-				CustomSeleniumLocator(driver);
+				ClickDisciplineOnShopToTrot(driver);
 			}
+		}
 
+		static void ClickDisciplineOnShopToTrot(ChromeDriver driver)
+		{
+			driver.Navigate().GoToUrl("http://shoptotrot.com");
 
+			LoadGlanceIntoDom(driver);
+
+			// Pause to allow time for glance to get loaded into the DOM.
+			Thread.Sleep(3000);
+
+			IWebElement disciplineInput = (IWebElement)driver.FindElement(new GlanceSelector("Discipline > input"));
+			disciplineInput.Click();
+
+			// Pause so you can see it's been clicked.
+			Thread.Sleep(3000);
+		}
+
+		static void LoadGlanceIntoDom(ChromeDriver driver)
+		{
+			// http://stackoverflow.com/questions/17385779/how-do-i-load-a-javascript-file-into-the-dom-using-selenium
+			var pathToGlance = "/Users/corywheeler/Documents/projects/test/glance-dom-selector-dotnet/" + 
+				"Glance.DomSelector.Specs/Lib/Scripts/glance-selector.js";
+			var glance = File.ReadAllText(pathToGlance);
+
+			((IJavaScriptExecutor) driver).ExecuteScript(glance);
 		}
 
 		static void CustomSeleniumLocator(ChromeDriver driver)
