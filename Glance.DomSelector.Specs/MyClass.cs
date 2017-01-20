@@ -30,12 +30,16 @@ namespace Glance.DomSelector.Specs
 
 			LoadGlanceIntoDom(driver, 3000);
 
+			var disciplineInput = driver.FindElement(new GlanceSelector("Discipline > input"));
 
-			IWebElement disciplineInput = (IWebElement)driver.FindElement(new GlanceSelector("Discipline > input"));
-			disciplineInput.Click();
+			ClickElementAndWaitForResult(disciplineInput, 3000);
+		}
 
-			// Pause so you can see it's been clicked.
-			Thread.Sleep(3000);
+		static void ClickElementAndWaitForResult(IWebElement element, int milliSecondsToWaitAfterClick)
+		{
+			element.Click();
+
+			Thread.Sleep(milliSecondsToWaitAfterClick);
 		}
 
 		static void LoadGlanceIntoDom(ChromeDriver driver, int millisecondsToWaitForGlanceToLoad)
