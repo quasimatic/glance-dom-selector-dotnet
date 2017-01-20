@@ -113,7 +113,7 @@ namespace Glance.DomSelector.Specs
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("Exception ....*********" + e.ToString());
+				Console.WriteLine("Exception ....*********" + e);
 			}
 			finally
 			{
@@ -142,7 +142,7 @@ namespace Glance.DomSelector.Specs
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("Exception ....*********" + e.ToString());
+				Console.WriteLine("Exception ....*********" + e);
 			}
 			finally
 			{
