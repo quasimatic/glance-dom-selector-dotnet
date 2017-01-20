@@ -30,15 +30,13 @@ namespace Glance.DomSelector.Specs
 		{
 			driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
 			Thread.Sleep(3000);
+
 			IWebElement theResult = (IWebElement) driver.FindElement(new GlanceSelector("square"));
 			theResult.Click();
 		}
 
-
-
 		public class GlanceSelector : By
 		{
-
 			private string _glanceReference;
 
 			public GlanceSelector(string glanceReference)
@@ -59,10 +57,7 @@ namespace Glance.DomSelector.Specs
 			{
 				return base.FindElements(context);
 			}
-
-			
 		}
-
 
 		static void SimplerExampleCodeToExecuteGlance(ChromeDriver driver)
 		{
@@ -130,6 +125,5 @@ namespace Glance.DomSelector.Specs
 				Console.ReadLine();
 			}
 		}
-
 	}
 }
