@@ -20,11 +20,11 @@ namespace Glance.DomSelector.Specs
 
 			using (var driver = new ChromeDriver("/Users/corywheeler/Documents/projects/chromestuff", options))
 			{
-				ClickDisciplineOnShopToTrot(driver);
+				LoadGlanceAndUseGlanceSelectorToClickDisciplineOnShopToTrot(driver);
 			}
 		}
 
-		static void ClickDisciplineOnShopToTrot(ChromeDriver driver)
+		static void LoadGlanceAndUseGlanceSelectorToClickDisciplineOnShopToTrot(ChromeDriver driver)
 		{
 			driver.Navigate().GoToUrl("http://shoptotrot.com");
 
