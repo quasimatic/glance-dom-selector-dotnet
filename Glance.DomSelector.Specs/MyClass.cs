@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading;
 
 namespace Glance.DomSelector.Specs
