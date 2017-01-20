@@ -1,159 +1,174 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
+using System.Net.Sockets;
 using System.Threading;
+using System.Reflection;
 
 namespace Glance.DomSelector.Specs
 {
-	[TestFixture]
-	public class When_trying_to_see_if_it_runs
-	{
-		[Test]
-		public void lets_try_something()
-		{
-			var options = new ChromeOptions();
-			options.AddArguments("start-maximized");
+    [TestFixture]
+    public class When_trying_to_see_if_it_runs
+    {
+        [Test]
+        public void lets_try_something()
+        {
+            DesiredCapabilities capabilities = DesiredCapabilities.Chrome();
 
-			using (var driver = new ChromeDriver("/Users/corywheeler/Documents/projects/chromestuff", options))
-			{
-				LoadGlanceAndUseGlanceSelectorToClickDisciplineOnShopToTrot(driver);
-			}
-		}
+            try
+            {
+                using (var driver = new RemoteWebDriver(capabilities))
+                {
+                    driver.Manage().Window.Maximize();
+                    LoadGlanceAndUseGlanceSelectorToClickDisciplineOnShopToTrot(driver);
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Please start selenium (ex: selenium-standalone start)");
+                throw exception;
+            }
+        }
 
-		static void LoadGlanceAndUseGlanceSelectorToClickDisciplineOnShopToTrot(ChromeDriver driver)
-		{
-			driver.Navigate().GoToUrl("http://shoptotrot.com");
+        static void LoadGlanceAndUseGlanceSelectorToClickDisciplineOnShopToTrot(RemoteWebDriver driver)
+        {
+            driver.Navigate().GoToUrl("http://shoptotrot.com");
 
-			LoadGlanceIntoDom(driver, 3000);
+            LoadGlanceIntoDom(driver, 3000);
 
-			var disciplineInput = driver.FindElement(new GlanceSelector("Discipline > input"));
+            var disciplineInput = driver.FindElement(new GlanceSelector("Discipline > input"));
 
-			ClickElementAndWaitForResult(disciplineInput, 3000);
-		}
+            ClickElementAndWaitForResult(disciplineInput, 3000);
+        }
 
-		static void ClickElementAndWaitForResult(IWebElement element, int milliSecondsToWaitAfterClick)
-		{
-			element.Click();
+        static void ClickElementAndWaitForResult(IWebElement element, int milliSecondsToWaitAfterClick)
+        {
+            element.Click();
 
-			Thread.Sleep(milliSecondsToWaitAfterClick);
-		}
+            Thread.Sleep(milliSecondsToWaitAfterClick);
+        }
 
-		static void LoadGlanceIntoDom(ChromeDriver driver, int millisecondsToWaitForGlanceToLoad)
-		{
-			// http://stackoverflow.com/questions/17385779/how-do-i-load-a-javascript-file-into-the-dom-using-selenium
-			var pathToGlance = "/Users/corywheeler/Documents/projects/test/glance-dom-selector-dotnet/" + 
-				"Glance.DomSelector.Specs/Lib/Scripts/glance-selector.js";
-			var glance = File.ReadAllText(pathToGlance);
+        static void LoadGlanceIntoDom(IWebDriver driver, int millisecondsToWaitForGlanceToLoad)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = "Glance.DomSelector.Specs.Lib.Scripts.glance-selector.js";
 
-			((IJavaScriptExecutor) driver).ExecuteScript(glance);
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                string glance = reader.ReadToEnd();
 
-			Thread.Sleep(millisecondsToWaitForGlanceToLoad);
-		}
+                ((IJavaScriptExecutor) driver).ExecuteScript(glance);
 
-		static void CustomSeleniumLocator(ChromeDriver driver)
-		{
-			driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
+                Thread.Sleep(millisecondsToWaitForGlanceToLoad);
 
-			int millisecondsToWaitForGlanceToLoad = 3000;
-			Thread.Sleep(millisecondsToWaitForGlanceToLoad);
+                ((IJavaScriptExecutor) driver).ExecuteScript(glance);
 
-			var theResult = driver.FindElement(new GlanceSelector("square"));
-			theResult.Click();
-		}
+                Thread.Sleep(millisecondsToWaitForGlanceToLoad);
+            }
+        }
 
-		public class GlanceSelector : By
-		{
-			private string _glanceReference;
+        static void CustomSeleniumLocator(IWebDriver driver)
+        {
+            driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
 
-			public GlanceSelector(string glanceReference)
-			{
-				_glanceReference = glanceReference;
+            int millisecondsToWaitForGlanceToLoad = 3000;
+            Thread.Sleep(millisecondsToWaitForGlanceToLoad);
 
-			}
+            var theResult = driver.FindElement(new GlanceSelector("square"));
+            theResult.Click();
+        }
 
-			public override IWebElement FindElement(ISearchContext context)
-			{
-				var driver = (RemoteWebDriver)context;
-				string executeGlance = "return glanceSelector('" + _glanceReference + "');";
-				var element = driver.ExecuteScript(executeGlance);
-				return (IWebElement) element;
-			}
+        public class GlanceSelector : By
+        {
+            private string _glanceReference;
 
-			public override ReadOnlyCollection<IWebElement> FindElements(ISearchContext context)
-			{
-				return base.FindElements(context);
-			}
-		}
+            public GlanceSelector(string glanceReference)
+            {
+                _glanceReference = glanceReference;
+            }
 
-		static void SimplerExampleCodeToExecuteGlance(ChromeDriver driver)
-		{
-			driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
-			string getTheSquare = "return glanceSelector('square');";
-			var theResult = (IWebElement) driver.ExecuteScript(getTheSquare);
-			theResult.Click();
-			Console.WriteLine(theResult + " cory");
-		}
+            public override IWebElement FindElement(ISearchContext context)
+            {
+                var driver = (RemoteWebDriver) context;
+                string executeGlance = "return glanceSelector('" + _glanceReference + "');";
+                var element = driver.ExecuteScript(executeGlance);
+                return (IWebElement) element;
+            }
 
-		static void ExampleCodeToExecuteGlance(ChromeDriver driver)
-		{
-			try
-			{
-				driver.Url = "http://quasimatic.org/take-a-glance/?level=2";
-				driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(20));
-				driver.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(50));
-				driver.Manage().Window.Maximize();
-				driver.Navigate();
+            public override ReadOnlyCollection<IWebElement> FindElements(ISearchContext context)
+            {
+                return base.FindElements(context);
+            }
+        }
 
-				string Javascript = "return glanceSelector('square').className;";
-				string t = ((IJavaScriptExecutor)driver).ExecuteScript(Javascript).ToString();
+        static void SimplerExampleCodeToExecuteGlance(RemoteWebDriver driver)
+        {
+            driver.Navigate().GoToUrl("http://quasimatic.org/take-a-glance/?level=2");
+            string getTheSquare = "return glanceSelector('square');";
+            var theResult = (IWebElement) driver.ExecuteScript(getTheSquare);
+            theResult.Click();
+            Console.WriteLine(theResult + " cory");
+        }
 
-				//Above code will return the html source of the page 
-				Console.WriteLine(t);
+        static void ExampleCodeToExecuteGlance(RemoteWebDriver driver)
+        {
+            try
+            {
+                driver.Url = "http://quasimatic.org/take-a-glance/?level=2";
+                driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(20));
+                driver.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(50));
+                driver.Manage().Window.Maximize();
+                driver.Navigate();
 
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Exception ....*********" + e);
-			}
-			finally
-			{
-				Thread.Sleep(2000);
-				driver.Quit();
-				Console.ReadLine();
-			}
-		}
+                string Javascript = "return glanceSelector('square').className;";
+                string t = ((IJavaScriptExecutor) driver).ExecuteScript(Javascript).ToString();
 
-		static void ExampleCodeToExecuteJavaScript(ChromeDriver driver)
-		{
-			try
-			{
-				driver.Url = "http://register.rediff.com/register/register.php";
-				driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(20));
-				driver.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(50));
-				driver.Manage().Window.Maximize();
-				driver.Navigate();
+                //Above code will return the html source of the page
+                Console.WriteLine(t);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception ....*********" + e);
+            }
+            finally
+            {
+                Thread.Sleep(2000);
+                driver.Quit();
+                Console.ReadLine();
+            }
+        }
 
-				string Javascript = "return document.documentElement.innerText;";
-				string t = ((IJavaScriptExecutor)driver).ExecuteScript(Javascript).ToString();
+        static void ExampleCodeToExecuteJavaScript(RemoteWebDriver driver)
+        {
+            try
+            {
+                driver.Url = "http://register.rediff.com/register/register.php";
+                driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(20));
+                driver.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(50));
+                driver.Manage().Window.Maximize();
+                driver.Navigate();
 
-				//Above code will return the html source of the page 
-				Console.WriteLine(t);
+                string Javascript = "return document.documentElement.innerText;";
+                string t = ((IJavaScriptExecutor) driver).ExecuteScript(Javascript).ToString();
 
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Exception ....*********" + e);
-			}
-			finally
-			{
-				Thread.Sleep(2000);
-				driver.Quit();
-				Console.ReadLine();
-			}
-		}
-	}
+                //Above code will return the html source of the page
+                Console.WriteLine(t);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception ....*********" + e);
+            }
+            finally
+            {
+                Thread.Sleep(2000);
+                driver.Quit();
+                Console.ReadLine();
+            }
+        }
+    }
 }

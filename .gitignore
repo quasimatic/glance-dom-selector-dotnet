@@ -9,3 +9,6 @@ packages
 
 # Mac related things
 .DS_Store
+
+# JetBrains things
+.idea
